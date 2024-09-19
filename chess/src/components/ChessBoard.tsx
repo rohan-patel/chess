@@ -19,7 +19,8 @@ const Chessboard: React.FC = () => {
   const [currentTurn, setCurrentTurn] = useState<Color | null>(null);
   const [playerColor, setPlayerColor] = useState<Color | null>(null);
   const ws = useRef<WebSocket | null>(null); // Store WebSocket connection reference
-  const webSocketUrl = process.env.WEB_SOCKET_URL || "ws://localhost:8080";
+  const webSocketUrl =
+    process.env.NEXT_PUBLIC_WEB_SOCKET_URL || "ws://localhost:8080";
   console.log("Web Socket Url: ", webSocketUrl);
 
   // Connect to WebSocket server and join room
