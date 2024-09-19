@@ -8,7 +8,7 @@ import { getValidMoves } from "@/game-logic/movements";
 import { Color, getColorFromString } from "@/game-logic/enums";
 import { Rings } from "react-loader-spinner";
 
-const Chessboard: React.FC = () => {
+const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
   const [board, setBoard] = useState<(Piece | null)[][]>(initializeBoard());
   const [selectedSquare, setSelectedSquare] = useState<{
     row: number;
@@ -25,7 +25,6 @@ const Chessboard: React.FC = () => {
 
   // Connect to WebSocket server and join room
   useEffect(() => {
-    const roomId = "my-chess-room"; // You can dynamically generate room ID or pass via props
     ws.current = new WebSocket(webSocketUrl); // Connect to WebSocket server
 
     ws.current.onopen = () => {
@@ -80,6 +79,7 @@ const Chessboard: React.FC = () => {
         JSON.stringify({
           type: "move",
           payload: { from, to },
+          roomId: roomId,
         })
       );
     }

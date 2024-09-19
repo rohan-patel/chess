@@ -38,6 +38,8 @@ wss.on("connection", (ws) => {
         const playerColor = room.players.white ? "black" : "white";
         room.players[playerColor] = ws;
 
+        rooms[roomId] = room;
+
         ws.send(JSON.stringify({ type: "welcome", payload: playerColor }));
 
         // If both players have joined, start the game
@@ -100,11 +102,19 @@ wss.on("connection", (ws) => {
 
 // Function to broadcast messages to other players in the room
 function broadcastToRoom(roomId, sender, message) {
-  rooms[roomId].forEach((client) => {
-    if (client !== sender) {
-      client.send(JSON.stringify(message));
-    }
-  });
+  const room = rooms[roomId];
+
+  const players = room.players;
+
+  const whiteClient = players.white;
+  const blackClient = players.black;
+
+  if (whiteClient !== sender) {
+    whiteClient.send(JSON.stringify(message));
+  }
+  if (blackClient !== sender) {
+    blackClient.send(JSON.stringify(message));
+  }
 }
 
 console.log("WebSocket server started on ws://localhost:8080");

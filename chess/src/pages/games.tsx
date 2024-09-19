@@ -6,7 +6,7 @@ const Game = () => {
 
   return (
     <div>
-      <ChessBoard />
+      <ChessBoard roomId="my-chess-room" />
     </div>
   );
 };
