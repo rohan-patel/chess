@@ -19,11 +19,13 @@ const Chessboard: React.FC = () => {
   const [currentTurn, setCurrentTurn] = useState<Color | null>(null);
   const [playerColor, setPlayerColor] = useState<Color | null>(null);
   const ws = useRef<WebSocket | null>(null); // Store WebSocket connection reference
-  const websocketUrl = process.env.websocketUrl || "ws://localhost:8080";
+  const webSocketUrl = process.env.WEB_SOCKET_URL || "ws://localhost:8080";
+  console.log("Web Socket Url: ", webSocketUrl);
+
   // Connect to WebSocket server and join room
   useEffect(() => {
     const roomId = "my-chess-room"; // You can dynamically generate room ID or pass via props
-    ws.current = new WebSocket(websocketUrl); // Connect to WebSocket server
+    ws.current = new WebSocket(webSocketUrl); // Connect to WebSocket server
 
     ws.current.onopen = () => {
       console.log("WebSocket connected");
