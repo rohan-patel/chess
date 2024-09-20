@@ -42,30 +42,30 @@ export function getValidMoves(
 
   const validMovesAndCaptures = getValidMovesForPiece(board, row, col);
 
-  if (kingIsInCheck) {
-    const validMoves = validMovesAndCaptures.moves.filter(
-      ([targetRow, targetCol]) => {
-        const simulatedBoard = deepCopyBoard(board);
-        simulatedBoard[targetRow][targetCol] = simulatedBoard[row][col];
-        simulatedBoard[row][col] = null;
+  // if (kingIsInCheck) {
+  const validMoves = validMovesAndCaptures.moves.filter(
+    ([targetRow, targetCol]) => {
+      const simulatedBoard = deepCopyBoard(board);
+      simulatedBoard[targetRow][targetCol] = simulatedBoard[row][col];
+      simulatedBoard[row][col] = null;
 
-        return !isKingInCheck(simulatedBoard, currentTurn); // Only allow moves that resolve the check
-      }
-    );
-    const validCaptures = validMovesAndCaptures.captures.filter(
-      ([targetRow, targetCol]) => {
-        const simulatedBoard = deepCopyBoard(board);
-        simulatedBoard[targetRow][targetCol] = simulatedBoard[row][col];
-        simulatedBoard[row][col] = null;
+      const isKingInCheckForSimualtedBoard = !isKingInCheck(
+        simulatedBoard,
+        currentTurn
+      ); // Only allow moves that resolve the check
+      return isKingInCheckForSimualtedBoard;
+    }
+  );
+  const validCaptures = validMovesAndCaptures.captures.filter(
+    ([targetRow, targetCol]) => {
+      const simulatedBoard = deepCopyBoard(board);
+      simulatedBoard[targetRow][targetCol] = simulatedBoard[row][col];
+      simulatedBoard[row][col] = null;
 
-        return !isKingInCheck(simulatedBoard, currentTurn); // Only allow moves that resolve the check
-      }
-    );
-    return { moves: validMoves, captures: validCaptures };
-  }
-  console.log("king is not in check");
-
-  return validMovesAndCaptures;
+      return !isKingInCheck(simulatedBoard, currentTurn); // Only allow moves that resolve the check
+    }
+  );
+  return { moves: validMoves, captures: validCaptures };
 }
 
 const getPawnMoves = (
@@ -260,7 +260,6 @@ const getKingMoves = (
 ) => {
   const captures: [number, number][] = [];
   const moves: [number, number][] = [];
-  const piece = board[row][col];
   const possibleMoves = [
     [-1, -1],
     [-1, 0],
@@ -282,49 +281,14 @@ const getKingMoves = (
       j < 8 &&
       (board[i][j] === null || board[i][j]?.color !== color)
     ) {
-      const opponentsValidMoves = getAllValidMoves(
-        board,
-        piece?.color === Color.Black ? Color.White : Color.Black
-      );
-
       if (board[i][j] && board[i][j]?.color !== color) {
-        const newBoard = deepCopyBoard(board);
-        newBoard[i][j] = null;
-        const opponentValidCaptures = getAllValidMoves(
-          newBoard,
-          piece?.color === Color.Black ? Color.White : Color.Black
-        );
-        if (!opponentValidCaptures.some(([r, c]) => r === i && c === j)) {
-          captures.push([i, j]);
-        }
+        captures.push([i, j]);
       } else {
-        if (!opponentsValidMoves.some(([r, c]) => r === i && c === j)) {
-          moves.push([i, j]);
-        }
+        moves.push([i, j]);
       }
     }
   }
   return { moves, captures };
-};
-
-const getAllValidMoves = (
-  board: (Piece | null)[][],
-  color: Color
-): [number, number][] => {
-  const validMoves: [number, number][] = [];
-  for (let row = 0; row < 8; row++) {
-    for (let col = 0; col < 8; col++) {
-      const piece = board[row][col];
-      if (piece && piece.color === color) {
-        // console.log("Piece: ", piece.type);
-        const { moves } = getValidMovesForPiece(board, row, col);
-        // console.log("Moves: ", moves);
-
-        validMoves.push(...moves);
-      }
-    }
-  }
-  return validMoves;
 };
 
 const getAllCaptureMoves = (

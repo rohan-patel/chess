@@ -33,11 +33,12 @@ export const initializeBoard = (): Board => {
   board[6] = Array(8).fill({ type: PieceType.Pawn, color: Color.Black });
   // board[4][1] = { type: PieceType.Pawn, color: Color.Black };
   // board[4][4] = { type: PieceType.King, color: Color.Black };
-  board[3][3] = { type: PieceType.King, color: Color.White };
-  board[2][5] = { type: PieceType.Knight, color: Color.White };
-  board[2][7] = { type: PieceType.Bishop, color: Color.White };
-  board[4][2] = { type: PieceType.Bishop, color: Color.White };
-  board[5][1] = { type: PieceType.Bishop, color: Color.Black };
+  // board[3][3] = { type: PieceType.King, color: Color.White };
+  // board[2][5] = { type: PieceType.Knight, color: Color.White };
+  // board[2][7] = { type: PieceType.Bishop, color: Color.White };
+  // board[4][2] = { type: PieceType.Bishop, color: Color.White };
+  // board[5][1] = { type: PieceType.Bishop, color: Color.Black };
+  // board[5][2] = { type: PieceType.Knight, color: Color.Black };
 
   return board;
 };
