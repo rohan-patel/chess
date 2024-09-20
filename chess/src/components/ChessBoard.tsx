@@ -17,7 +17,8 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
   const [validMoves, setValidMoves] = useState<[number, number][]>([]);
   const [captures, setCaptures] = useState<[number, number][]>([]);
   const [currentTurn, setCurrentTurn] = useState<Color | null>(null);
-  const [playerColor, setPlayerColor] = useState<Color | null>(null);
+  // const [playerColor, setPlayerColor] = useState<Color | null>(null);
+  const playerColor = useRef<Color | null>(null);
   const ws = useRef<WebSocket | null>(null); // Store WebSocket connection reference
   const webSocketUrl =
     process.env.NEXT_PUBLIC_WEB_SOCKET_URL || "ws://localhost:8080";
@@ -43,7 +44,7 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
       if (type === "welcome") {
         console.log("Welcome Player: ", payload);
 
-        setPlayerColor(getColorFromString(payload));
+        playerColor.current = getColorFromString(payload);
       }
 
       if (type === "gameStart") {
@@ -56,7 +57,8 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
         // Receive opponent's move
         const { from, to } = payload;
         setBoard((prevBoard) => makeMove(prevBoard, from, to));
-        setCurrentTurn(currentTurn === Color.Black ? Color.White : Color.Black); // Switch turns
+
+        setCurrentTurn(playerColor.current); // Switch turns
       }
     };
 
@@ -82,11 +84,12 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
           roomId: roomId,
         })
       );
+      // setCurrentTurn(playerColor === Color.Black ? Color.White : Color.Black);
     }
   };
 
   const handleSquareClick = (row: number, col: number) => {
-    if (playerColor !== currentTurn) {
+    if (playerColor.current !== currentTurn) {
       alert("It's not your turn!");
       return;
     }
@@ -151,7 +154,7 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
           <div className="shadow-2xl">
             <div
               className={`w-96 grid grid-cols-8 grid-rows-8 gap-0 ${
-                playerColor === Color.White ? "scale-y-[-1]" : ""
+                playerColor.current === Color.White ? "scale-y-[-1]" : ""
               }`}
             >
               {board.map((row, rowIndex) =>
@@ -172,7 +175,7 @@ const Chessboard: React.FC<{ roomId: string }> = ({ roomId }) => {
                       ([r, c]) => r === rowIndex && c === colIndex
                     )}
                     onClick={() => handleSquareClick(rowIndex, colIndex)}
-                    playerColor={playerColor as Color}
+                    playerColor={playerColor.current as Color}
                   />
                 ))
               )}
